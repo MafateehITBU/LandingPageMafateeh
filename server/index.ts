@@ -52,31 +52,31 @@ async function startServer() {
         });
       }
 
-      // Create transporter with improved connection settings
-      // For SendGrid: use port 587 with STARTTLS
-      // For Gmail: use port 465 with SSL (but Gmail blocks cloud IPs)
+      // Create transporter with Gmail-optimized settings
+      // Gmail works best with port 465 (SSL) on cloud platforms
       const transporter = nodemailer.createTransport({
         host: smtpHost,
         port: smtpPort,
-        secure: smtpPort === 465, // true for 465, false for other ports
+        secure: smtpPort === 465, // true for 465 (SSL), false for 587 (STARTTLS)
         auth: {
           user: smtpUser,
           pass: smtpPass,
         },
-        connectionTimeout: 30000, // 30 seconds (increased for cloud platforms)
+        // Increased timeouts for cloud platforms
+        connectionTimeout: 60000, // 60 seconds
         greetingTimeout: 30000, // 30 seconds
-        socketTimeout: 30000, // 30 seconds
+        socketTimeout: 60000, // 60 seconds
+        // Gmail-specific TLS settings
         tls: {
           rejectUnauthorized: false,
-          minVersion: 'TLSv1.2'
+          minVersion: 'TLSv1.2',
+          ciphers: 'SSLv3'
         },
-        // Disable pooling for better reliability on cloud platforms
+        // Disable pooling for Gmail on cloud platforms
         pool: false,
-        // Retry configuration
-        retry: {
-          attempts: 3,
-          delay: 2000
-        }
+        // Gmail rate limiting
+        rateLimit: 14, // Gmail allows 14 emails per second
+        rateDelta: 1000
       });
 
       // Skip verification in production (can timeout on cloud platforms)
@@ -94,8 +94,7 @@ async function startServer() {
       }
 
       // Email content
-      // For SendGrid: from email must be verified sender
-      // For Gmail: can use smtpUser
+      // For Gmail: from email should be the same as smtpUser
       const fromEmail = process.env.FROM_EMAIL || smtpUser;
       const mailOptions = {
         from: `"${name}" <${fromEmail}>`,
