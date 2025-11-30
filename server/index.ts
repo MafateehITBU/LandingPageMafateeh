@@ -53,7 +53,8 @@ async function startServer() {
       }
 
       // Create transporter with Gmail-optimized settings
-      // Gmail works best with port 465 (SSL) on cloud platforms
+      // Note: Gmail often blocks cloud platform IPs, connection may timeout
+      // If this fails, consider using SendGrid, Mailgun, or Resend instead
       const transporter = nodemailer.createTransport({
         host: smtpHost,
         port: smtpPort,
@@ -62,21 +63,21 @@ async function startServer() {
           user: smtpUser,
           pass: smtpPass,
         },
-        // Increased timeouts for cloud platforms
-        connectionTimeout: 60000, // 60 seconds
-        greetingTimeout: 30000, // 30 seconds
-        socketTimeout: 60000, // 60 seconds
+        // Aggressive timeout settings for Gmail on cloud platforms
+        connectionTimeout: 20000, // 20 seconds (Gmail often blocks, shorter timeout)
+        greetingTimeout: 20000, // 20 seconds
+        socketTimeout: 20000, // 20 seconds
         // Gmail-specific TLS settings
         tls: {
           rejectUnauthorized: false,
-          minVersion: 'TLSv1.2',
-          ciphers: 'SSLv3'
+          minVersion: 'TLSv1.2'
         },
-        // Disable pooling for Gmail on cloud platforms
+        // Disable pooling - Gmail doesn't like persistent connections from cloud
         pool: false,
-        // Gmail rate limiting
-        rateLimit: 14, // Gmail allows 14 emails per second
-        rateDelta: 1000
+        // Try direct connection without keepalive
+        requireTLS: smtpPort === 587,
+        // Disable service detection
+        service: smtpHost.includes('gmail') ? 'gmail' : undefined
       });
 
       // Skip verification in production (can timeout on cloud platforms)
