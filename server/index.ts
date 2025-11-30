@@ -53,6 +53,8 @@ async function startServer() {
       }
 
       // Create transporter with improved connection settings
+      // For SendGrid: use port 587 with STARTTLS
+      // For Gmail: use port 465 with SSL (but Gmail blocks cloud IPs)
       const transporter = nodemailer.createTransport({
         host: smtpHost,
         port: smtpPort,
@@ -61,21 +63,23 @@ async function startServer() {
           user: smtpUser,
           pass: smtpPass,
         },
-        connectionTimeout: 10000, // 10 seconds
-        greetingTimeout: 10000, // 10 seconds
-        socketTimeout: 10000, // 10 seconds
+        connectionTimeout: 30000, // 30 seconds (increased for cloud platforms)
+        greetingTimeout: 30000, // 30 seconds
+        socketTimeout: 30000, // 30 seconds
         tls: {
           rejectUnauthorized: false,
           minVersion: 'TLSv1.2'
         },
-        pool: true, // Use connection pooling
-        maxConnections: 1,
-        maxMessages: 3,
-        rateDelta: 1000,
-        rateLimit: 5
+        // Disable pooling for better reliability on cloud platforms
+        pool: false,
+        // Retry configuration
+        retry: {
+          attempts: 3,
+          delay: 2000
+        }
       });
 
-      // Skip verification in production (Gmail can timeout on cloud platforms)
+      // Skip verification in production (can timeout on cloud platforms)
       // We'll verify during actual send instead
       if (process.env.NODE_ENV === "development") {
         try {
@@ -85,11 +89,16 @@ async function startServer() {
           console.error("SMTP verification failed:", verifyError);
           // Don't fail here, try sending anyway
         }
+      } else {
+        console.log("Skipping SMTP verification in production (will verify during send)");
       }
 
       // Email content
+      // For SendGrid: from email must be verified sender
+      // For Gmail: can use smtpUser
+      const fromEmail = process.env.FROM_EMAIL || smtpUser;
       const mailOptions = {
-        from: `"${name}" <${smtpUser}>`,
+        from: `"${name}" <${fromEmail}>`,
         to: "khaled.quzai@mafateehgroup.com",
         subject: `New Contact Form Submission from ${name}`,
         html: `
