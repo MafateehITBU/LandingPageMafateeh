@@ -52,7 +52,7 @@ async function startServer() {
         });
       }
 
-      // Create transporter
+      // Create transporter with improved connection settings
       const transporter = nodemailer.createTransport({
         host: smtpHost,
         port: smtpPort,
@@ -61,20 +61,30 @@ async function startServer() {
           user: smtpUser,
           pass: smtpPass,
         },
+        connectionTimeout: 10000, // 10 seconds
+        greetingTimeout: 10000, // 10 seconds
+        socketTimeout: 10000, // 10 seconds
         tls: {
-          rejectUnauthorized: false
-        }
+          rejectUnauthorized: false,
+          minVersion: 'TLSv1.2'
+        },
+        pool: true, // Use connection pooling
+        maxConnections: 1,
+        maxMessages: 3,
+        rateDelta: 1000,
+        rateLimit: 5
       });
 
-      // Verify transporter configuration
-      try {
-        await transporter.verify();
-        console.log("SMTP server is ready to send emails");
-      } catch (verifyError) {
-        console.error("SMTP verification failed:", verifyError);
-        return res.status(500).json({ 
-          error: "SMTP server configuration error. Please check your credentials." 
-        });
+      // Skip verification in production (Gmail can timeout on cloud platforms)
+      // We'll verify during actual send instead
+      if (process.env.NODE_ENV === "development") {
+        try {
+          await transporter.verify();
+          console.log("SMTP server is ready to send emails");
+        } catch (verifyError) {
+          console.error("SMTP verification failed:", verifyError);
+          // Don't fail here, try sending anyway
+        }
       }
 
       // Email content
