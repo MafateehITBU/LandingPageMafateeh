@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mafateeh-landing.manus.space/sitemap.xml
