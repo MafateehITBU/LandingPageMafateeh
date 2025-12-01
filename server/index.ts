@@ -8,7 +8,21 @@ import dotenv from "dotenv";
 // Load environment variables from root directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
+const envPath = path.resolve(__dirname, "..", ".env");
+
+console.log("📁 Loading .env file from:", envPath);
+const envResult = dotenv.config({ path: envPath });
+
+if (envResult.error) {
+  console.error("❌ Error loading .env file:", envResult.error);
+} else {
+  console.log("✅ .env file loaded successfully");
+  // Log which SMTP variables are set (without showing values)
+  console.log("SMTP_HOST:", process.env.SMTP_HOST ? "✅ Set" : "❌ Missing");
+  console.log("SMTP_PORT:", process.env.SMTP_PORT ? "✅ Set" : "❌ Missing");
+  console.log("SMTP_USER:", process.env.SMTP_USER ? "✅ Set" : "❌ Missing");
+  console.log("SMTP_PASS:", process.env.SMTP_PASS ? "✅ Set" : "❌ Missing");
+}
 
 async function startServer() {
   const app = express();
@@ -45,6 +59,13 @@ async function startServer() {
       const smtpUser = process.env.SMTP_USER;
       // Remove spaces from App Password (Gmail App Passwords are 16 characters, sometimes copied with spaces)
       const smtpPass = process.env.SMTP_PASS?.replace(/\s+/g, "") || process.env.SMTP_PASS;
+      
+      console.log("\n📧 Contact form submission received");
+      console.log("SMTP Configuration:");
+      console.log("  Host:", smtpHost);
+      console.log("  Port:", smtpPort);
+      console.log("  User:", smtpUser);
+      console.log("  Pass:", smtpPass ? `✅ Set (${smtpPass.length} chars)` : "❌ Missing");
 
       if (!smtpUser || !smtpPass) {
         console.error("❌ SMTP credentials not configured.");
