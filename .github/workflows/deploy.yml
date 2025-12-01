@@ -37,9 +37,11 @@ jobs:
         run: pnpm install
 
       - name: Build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
         run: |
           REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
-          pnpm run build -- --base=/$REPO_NAME/
+          pnpm run build:gh-pages -- --base=/$REPO_NAME/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
