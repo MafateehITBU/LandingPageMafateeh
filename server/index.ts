@@ -52,46 +52,38 @@ async function startServer() {
         });
       }
 
-      // Create transporter with Gmail-optimized settings
-      // Note: Gmail often blocks cloud platform IPs, connection may timeout
-      // If this fails, consider using SendGrid, Mailgun, or Resend instead
+      // Create Gmail transporter with standard SMTP settings
       const transporter = nodemailer.createTransport({
+        service: 'gmail',
         host: smtpHost,
         port: smtpPort,
         secure: smtpPort === 465, // true for 465 (SSL), false for 587 (STARTTLS)
         auth: {
           user: smtpUser,
-          pass: smtpPass,
+          pass: smtpPass, // Gmail App Password (not regular password)
         },
-        // Aggressive timeout settings for Gmail on cloud platforms
-        connectionTimeout: 20000, // 20 seconds (Gmail often blocks, shorter timeout)
-        greetingTimeout: 20000, // 20 seconds
-        socketTimeout: 20000, // 20 seconds
-        // Gmail-specific TLS settings
+        // Standard Gmail SMTP settings
         tls: {
           rejectUnauthorized: false,
-          minVersion: 'TLSv1.2'
+          ciphers: 'SSLv3'
         },
-        // Disable pooling - Gmail doesn't like persistent connections from cloud
-        pool: false,
-        // Try direct connection without keepalive
-        requireTLS: smtpPort === 587,
-        // Disable service detection
-        service: smtpHost.includes('gmail') ? 'gmail' : undefined
+        // Connection settings
+        connectionTimeout: 30000, // 30 seconds
+        greetingTimeout: 30000, // 30 seconds
+        socketTimeout: 30000, // 30 seconds
       });
 
-      // Skip verification in production (can timeout on cloud platforms)
-      // We'll verify during actual send instead
+      // Verify SMTP connection (only in development to avoid timeouts in production)
       if (process.env.NODE_ENV === "development") {
         try {
           await transporter.verify();
-          console.log("SMTP server is ready to send emails");
+          console.log("✅ Gmail SMTP server is ready to send emails");
         } catch (verifyError) {
-          console.error("SMTP verification failed:", verifyError);
-          // Don't fail here, try sending anyway
+          console.error("⚠️ SMTP verification failed:", verifyError);
+          console.log("⚠️ Will attempt to send email anyway...");
         }
       } else {
-        console.log("Skipping SMTP verification in production (will verify during send)");
+        console.log("📧 Gmail SMTP configured (skipping verification in production)");
       }
 
       // Email content

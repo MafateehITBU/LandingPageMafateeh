@@ -60,66 +60,89 @@ pnpm run build -- --base=/YOUR-REPO-NAME/
 # You can push the dist/public folder to the gh-pages branch
 ```
 
-## Email Configuration
+## Email Configuration (Gmail with Nodemailer)
 
-### For Server Deployment (with Node.js)
+The contact form sends emails using Gmail SMTP via Nodemailer. Follow these steps to configure:
 
-If deploying to a server with Node.js support, configure SMTP settings in `.env`:
+### Step 1: Enable 2-Step Verification on Gmail
+
+1. Go to your Google Account: [https://myaccount.google.com/security](https://myaccount.google.com/security)
+2. Under "Signing in to Google", click **2-Step Verification**
+3. Follow the steps to enable it (if not already enabled)
+
+### Step 2: Generate Gmail App Password
+
+1. Go to [https://myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
+2. Select **Mail** as the app
+3. Select **Other (Custom name)** as the device
+4. Enter a name like "Mafateeh Landing Page"
+5. Click **Generate**
+6. **Copy the 16-character password** (it looks like: `abcd efgh ijkl mnop`)
+   - ⚠️ **Important**: You won't be able to see this password again, so copy it now!
+
+### Step 3: Configure Environment Variables
+
+#### For Local Development
+
+Create a `.env` file in the project root:
 
 ```env
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-password
+SMTP_PASS=your-16-character-app-password
+FROM_EMAIL=your-email@gmail.com
 ```
 
-### For GitHub Pages (EmailJS Setup)
+**Important Notes:**
+- `SMTP_USER`: Your Gmail address (e.g., `saeedfwaz00@gmail.com`)
+- `SMTP_PASS`: The 16-character App Password (remove spaces: `abcdefghijklmnop`)
+- `FROM_EMAIL`: Usually the same as `SMTP_USER`
+- `SMTP_PORT`: Use `587` (STARTTLS) or `465` (SSL)
 
-The form uses EmailJS for automatic email sending on GitHub Pages. Follow these steps:
+#### For Render Deployment
 
-1. **Create a free EmailJS account**:
-   - Go to [https://www.emailjs.com/](https://www.emailjs.com/)
-   - Sign up for a free account (200 emails/month free)
+1. Go to your Render dashboard
+2. Select your service
+3. Go to **Environment** tab
+4. Add these environment variables:
 
-2. **Set up Email Service**:
-   - Go to "Email Services" in your EmailJS dashboard
-   - Add a service (Gmail, Outlook, etc.)
-   - Note your Service ID
+```
+SMTP_HOST = smtp.gmail.com
+SMTP_PORT = 587
+SMTP_USER = your-email@gmail.com
+SMTP_PASS = your-16-character-app-password
+FROM_EMAIL = your-email@gmail.com
+```
 
-3. **Create Email Template**:
-   - Go to "Email Templates"
-   - Create a new template with these variables:
-     - `{{to_email}}` - recipient email (set to: khaled.quzai@mafateehgroup.com)
-     - `{{from_name}}` - sender name
-     - `{{from_email}}` - sender email
-     - `{{company}}` - company name
-     - `{{phone}}` - phone number
-     - `{{message}}` - message content
-     - `{{reply_to}}` - reply-to email
-   - Note your Template ID
+5. Click **Save Changes**
+6. Render will automatically redeploy
 
-4. **Get Public Key**:
-   - Go to "Account" → "General"
-   - Copy your Public Key
+### Step 4: Test the Configuration
 
-5. **Add Environment Variables**:
-   - For local development, create a `.env` file in the project root:
-   ```env
-   VITE_EMAILJS_SERVICE_ID=your_service_id
-   VITE_EMAILJS_TEMPLATE_ID=your_template_id
-   VITE_EMAILJS_PUBLIC_KEY=your_public_key
-   ```
-   
-   - For GitHub Pages deployment, add these as "Secrets" in your repository:
-     - Go to your GitHub repository → Settings → Secrets and variables → Actions
-     - Click "New repository secret"
-     - Add these three secrets:
-       - `VITE_EMAILJS_SERVICE_ID` = your service ID
-       - `VITE_EMAILJS_TEMPLATE_ID` = your template ID
-       - `VITE_EMAILJS_PUBLIC_KEY` = your public key
-     - The GitHub Actions workflow will automatically use these secrets during build
+1. Start your server: `pnpm start`
+2. Submit the contact form on your website
+3. Check the server logs for email confirmation
+4. Check `khaled.quzai@mafateehgroup.com` inbox for the email
 
-**Note**: The free tier allows 200 emails per month. For production, consider upgrading or using the server-side email option.
+### Troubleshooting
+
+**Connection Timeout Error:**
+- Gmail may block connections from cloud platforms (like Render)
+- If this happens, try:
+  1. Generate a new App Password
+  2. Wait a few minutes and try again
+  3. Consider using SendGrid, Mailgun, or Resend as alternatives
+
+**Authentication Failed:**
+- Make sure you're using an **App Password**, not your regular Gmail password
+- Verify 2-Step Verification is enabled
+- Check that the App Password is copied correctly (no spaces)
+
+**Email Not Received:**
+- Check spam/junk folder
+- Verify the recipient email: `khaled.quzai@mafateehgroup.com`
+- Check server logs for error messages
 
 ## Project Structure
 
