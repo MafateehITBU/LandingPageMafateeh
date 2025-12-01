@@ -40,5 +40,13 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
+    // Proxy API requests to Express server in development
+    proxy: {
+      "/api": {
+        target: process.env.VITE_API_URL || "http://localhost:3001",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 });

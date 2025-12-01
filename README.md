@@ -12,13 +12,53 @@ Digital marketing agency landing page for Mafateeh Group.
 
 ## Development
 
+### Running the Development Servers
+
+This project has two parts:
+1. **Frontend** (Vite dev server) - runs on port 3000
+2. **Backend** (Express server) - runs on port 3001
+
+You need to run **both servers** for the contact form to work:
+
+#### Option 1: Run Both Servers Separately (Recommended)
+
+**Terminal 1 - Frontend:**
 ```bash
-# Install dependencies
+# Install dependencies (first time only)
 pnpm install
 
-# Start development server
+# Start Vite dev server (frontend)
 pnpm dev
+```
 
+**Terminal 2 - Backend:**
+```bash
+# Start Express server (backend)
+# Make sure you have a .env file with Gmail SMTP credentials
+NODE_ENV=development tsx server/index.ts
+```
+
+Or use the built version:
+```bash
+pnpm build
+NODE_ENV=development node dist/index.js
+```
+
+#### Option 2: Use Production Build Locally
+
+```bash
+# Build everything
+pnpm build
+
+# Start production server (runs both frontend and backend)
+pnpm start
+```
+
+The server will be available at `http://localhost:3000`
+
+### Build Commands
+
+```bash
 # Build for production
 pnpm build
 

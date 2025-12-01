@@ -28,7 +28,7 @@ import {
   Star,
   Quote,
 } from "lucide-react";
-import { APP_LOGO } from "@/const";
+import { APP_LOGO, CONTACT_API_URL } from "@/const";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
@@ -136,7 +136,7 @@ export default function Home() {
     
     try {
       // Send to server API endpoint (uses nodemailer)
-      const response = await fetch("/api/contact", {
+      const response = await fetch(CONTACT_API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -144,9 +144,23 @@ export default function Home() {
         body: JSON.stringify(formData),
       });
 
+      // Check if response is ok before parsing JSON
+      if (!response.ok) {
+        // Try to get error message from response
+        let errorMessage = "Failed to send message";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          // If response is not JSON, use status text
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
+      }
+
       const data = await response.json();
 
-      if (response.ok) {
+      if (data.success) {
         toast.success(language === "en" ? "Thank you! We'll contact you soon." : "شكراً لك! سنتواصل معك قريباً.");
         // Reset form
         setFormData({
@@ -161,9 +175,16 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : (language === "en" ? "Failed to send message. Please try again." : "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى.");
+      let errorMessage = language === "en" ? "Failed to send message. Please try again." : "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى.";
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (error instanceof TypeError && error.message.includes("fetch")) {
+        errorMessage = language === "en" 
+          ? "Cannot connect to server. Please make sure the server is running." 
+          : "لا يمكن الاتصال بالخادم. يرجى التأكد من تشغيل الخادم.";
+      }
+      
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);

@@ -140,7 +140,8 @@ async function startServer() {
     res.sendFile(path.join(staticPath, "index.html"));
   });
 
-  const port = process.env.PORT || 3000;
+  // Use port 3001 in development (Vite uses 3000), 3000 in production
+  const port = process.env.PORT || (process.env.NODE_ENV === "development" ? 3001 : 3000);
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
