@@ -43,16 +43,29 @@ async function startServer() {
       const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
       const smtpPort = parseInt(process.env.SMTP_PORT || "587");
       const smtpUser = process.env.SMTP_USER;
-      const smtpPass = process.env.SMTP_PASS;
+      // Remove spaces from App Password (Gmail App Passwords are 16 characters, sometimes copied with spaces)
+      const smtpPass = process.env.SMTP_PASS?.replace(/\s+/g, "") || process.env.SMTP_PASS;
 
       if (!smtpUser || !smtpPass) {
-        console.error("SMTP credentials not configured. SMTP_USER:", !!smtpUser, "SMTP_PASS:", !!smtpPass);
+        console.error("❌ SMTP credentials not configured.");
+        console.error("SMTP_USER:", smtpUser ? "✅ Set" : "❌ Missing");
+        console.error("SMTP_PASS:", smtpPass ? "✅ Set" : "❌ Missing");
+        console.error("Make sure you have a .env file with SMTP credentials in the project root.");
         return res.status(500).json({ 
-          error: "Email service not configured. Please check server environment variables." 
+          error: "Email service not configured. Please check server environment variables.",
+          details: process.env.NODE_ENV === "development" 
+            ? "Missing SMTP_USER or SMTP_PASS in .env file" 
+            : undefined
         });
       }
 
       // Create Gmail transporter with standard SMTP settings
+      console.log("📧 Configuring Gmail SMTP...");
+      console.log("Host:", smtpHost);
+      console.log("Port:", smtpPort);
+      console.log("User:", smtpUser);
+      console.log("Password length:", smtpPass?.length || 0);
+      
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         host: smtpHost,
@@ -108,20 +121,37 @@ async function startServer() {
       };
 
       // Send email
+      console.log("📧 Attempting to send email...");
+      console.log("From:", fromEmail);
+      console.log("To: khaled.quzai@mafateehgroup.com");
+      
       const info = await transporter.sendMail(mailOptions);
-      console.log("Email sent successfully:", info.messageId);
+      console.log("✅ Email sent successfully!");
+      console.log("Message ID:", info.messageId);
 
       res.json({ success: true, message: "Email sent successfully" });
     } catch (error: any) {
-      console.error("Error sending email:", error);
+      console.error("❌ Error sending email:");
+      console.error("Error message:", error?.message);
+      console.error("Error code:", error?.code);
+      console.error("Error command:", error?.command);
+      console.error("Error response:", error?.response);
+      
       const errorMessage = error?.message || "Failed to send email";
-      console.error("Error details:", {
-        code: error?.code,
-        command: error?.command,
-        response: error?.response,
-      });
+      const errorCode = error?.code;
+      
+      // Provide helpful error messages
+      let userFriendlyError = "Failed to send email";
+      if (errorCode === "ETIMEDOUT" || errorCode === "ECONNREFUSED") {
+        userFriendlyError = "Cannot connect to Gmail server. Please check your internet connection and try again.";
+      } else if (errorCode === "EAUTH") {
+        userFriendlyError = "Gmail authentication failed. Please check your App Password.";
+      } else if (errorMessage.includes("Invalid login")) {
+        userFriendlyError = "Invalid Gmail credentials. Please check your App Password.";
+      }
+      
       res.status(500).json({ 
-        error: "Failed to send email",
+        error: userFriendlyError,
         details: process.env.NODE_ENV === "development" ? errorMessage : undefined
       });
     }

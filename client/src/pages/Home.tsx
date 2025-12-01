@@ -148,14 +148,30 @@ export default function Home() {
       if (!response.ok) {
         // Try to get error message from response
         let errorMessage = "Failed to send message";
+        let errorDetails = "";
         try {
           const errorData = await response.json();
           errorMessage = errorData.error || errorMessage;
+          errorDetails = errorData.details || "";
         } catch {
           // If response is not JSON, use status text
           errorMessage = response.statusText || errorMessage;
         }
-        throw new Error(errorMessage);
+        
+        // Log full error for debugging
+        console.error("Server error:", {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorMessage,
+          details: errorDetails
+        });
+        
+        // Show detailed error in development
+        const finalErrorMessage = errorDetails && import.meta.env.DEV 
+          ? `${errorMessage}: ${errorDetails}`
+          : errorMessage;
+        
+        throw new Error(finalErrorMessage);
       }
 
       const data = await response.json();
