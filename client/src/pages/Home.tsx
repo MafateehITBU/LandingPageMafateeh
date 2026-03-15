@@ -424,7 +424,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="pt-6">
                   <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
@@ -469,30 +469,6 @@ export default function Home() {
                   <h3 className="text-xl font-semibold mb-2 text-foreground">{t("services.video.title")}</h3>
                   <p className="text-muted-foreground">
                     {t("services.video.desc")}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardContent className="pt-6">
-                  <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
-                    <Lightbulb className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2 text-foreground">{t("services.strategy.title")}</h3>
-                  <p className="text-muted-foreground">
-                    {t("services.strategy.desc")}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardContent className="pt-6">
-                  <div className="rounded-full bg-accent/10 w-12 h-12 flex items-center justify-center mb-4">
-                    <BarChart3 className="h-6 w-6 text-accent" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2 text-foreground">{t("services.analytics.title")}</h3>
-                  <p className="text-muted-foreground">
-                    {t("services.analytics.desc")}
                   </p>
                 </CardContent>
               </Card>
