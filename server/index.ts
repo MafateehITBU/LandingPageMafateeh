@@ -125,7 +125,7 @@ async function startServer() {
       const fromEmail = process.env.FROM_EMAIL || smtpUser;
       const mailOptions = {
         from: `"${name}" <${fromEmail}>`,
-        to: "khaled.quzai@mafateehgroup.com",
+        to: "saeedfwaz00@gmail.com",
         subject: `New Contact Form Submission from ${name}`,
         html: `
           <h2>New Contact Form Submission</h2>
@@ -144,7 +144,7 @@ async function startServer() {
       // Send email
       console.log("📧 Attempting to send email...");
       console.log("From:", fromEmail);
-      console.log("To: khaled.quzai@mafateehgroup.com");
+      console.log("To: saeedfwaz00@gmail.com");
       
       const info = await transporter.sendMail(mailOptions);
       console.log("✅ Email sent successfully!");
