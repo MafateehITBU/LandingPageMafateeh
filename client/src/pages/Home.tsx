@@ -221,7 +221,7 @@ export default function Home() {
           </div>
           
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-4 xl:gap-6">
             <a href="#services" className="text-sm font-medium hover:text-primary transition-colors">{t("nav.services")}</a>
             <a href="#why-us" className="text-sm font-medium hover:text-primary transition-colors">{t("nav.whyUs")}</a>
             <a href="#why-mafateeh" className="text-sm font-medium hover:text-primary transition-colors">{t("whyMafateeh.title")}</a>
@@ -241,7 +241,7 @@ export default function Home() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden"
+            className="lg:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -250,7 +250,7 @@ export default function Home() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t bg-background">
+          <div className="lg:hidden border-t bg-background">
             <div className="container py-4 flex flex-col gap-4">
               <a href="#services" className="text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>{t("nav.services")}</a>
               <a href="#why-us" className="text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>{t("nav.whyUs")}</a>
@@ -275,9 +275,8 @@ export default function Home() {
       <main>
         {/* Hero Section */}
         <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/5 py-20 md:py-32">
-          <div className="absolute inset-0 bg-[url('/hero-bg.jpg')] bg-cover bg-center opacity-5"></div>
           <div className="container relative">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="max-w-3xl">
               <div className="space-y-8">
                 <div className="inline-block">
                   <span className="inline-flex items-center rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
@@ -334,14 +333,6 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-
-              <div className="hidden lg:block">
-                <img
-                  src="/analytics.webp"
-                  alt="Digital Marketing Analytics"
-                  className="rounded-2xl shadow-2xl"
-                />
-              </div>
             </div>
           </div>
         </section>
@@ -383,8 +374,8 @@ export default function Home() {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="hidden md:flex -left-12" />
-                <CarouselNext className="hidden md:flex -right-12" />
+                <CarouselPrevious className="hidden md:flex left-2" />
+                <CarouselNext className="hidden md:flex right-2" />
               </Carousel>
             </div>
 
