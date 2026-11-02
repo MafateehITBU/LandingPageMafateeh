@@ -29,6 +29,7 @@ import {
   Quote,
 } from "lucide-react";
 import { APP_LOGO, CONTACT_API_URL } from "@/const";
+import HeroImage from "@/assets/hero-store.jpg";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
@@ -208,7 +209,7 @@ export default function Home() {
   };
 
   const handleWhatsAppClick = () => {
-    window.open("https://wa.me/962770609728", "_blank");
+    window.open("https://wa.me/962771515525", "_blank");
   };
 
   return (
@@ -276,7 +277,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/5 py-20 md:py-32">
           <div className="container relative">
-            <div className="max-w-3xl">
+            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
               <div className="space-y-8">
                 <div className="inline-block">
                   <span className="inline-flex items-center rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
@@ -333,6 +334,11 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
+              <img
+                src={HeroImage}
+                alt="Laptop and phone showing an online store dashboard"
+                className="w-full rounded-2xl shadow-2xl"
+              />
             </div>
           </div>
         </section>
@@ -817,7 +823,7 @@ export default function Home() {
                           type="tel"
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          placeholder="+962 7 7060 9728"
+                          placeholder="+962 7 7151 5525"
                           required
                         />
                       </div>
@@ -1011,7 +1017,7 @@ export default function Home() {
 
       {/* Fixed WhatsApp Button */}
       <a
-        href="https://wa.me/962770609728"
+        href="https://wa.me/962771515525"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 bg-[#25D366] hover:bg-[#20BA5A] text-white rounded-full p-3 md:p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center group"

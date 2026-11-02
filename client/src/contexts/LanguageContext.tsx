@@ -188,7 +188,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.contact": "Contact",
     "footer.location": "Amman Jordan 7th Circle",
     "footer.email": "Email: info@mafateehgroup.com",
-    "footer.phone": "Phone: +962 7 7060 9728",
+    "footer.phone": "Phone: +962 7 7151 5525",
     "footer.copyright": "Mafateeh IT & Media Solutions. All rights reserved.",
   },
   ar: {
@@ -332,7 +332,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.contact": "اتصل بنا",
     "footer.location": "عمان الأردن الدائرة السابعة",
     "footer.email": "البريد الإلكتروني: info@mafateehgroup.com",
-    "footer.phone": "الهاتف: +962 7 7060 9728",
+    "footer.phone": "الهاتف: +962 7 7151 5525",
     "footer.copyright": "مفاتيح لتكنولوجيا المعلومات والحلول الإعلامية. جميع الحقوق محفوظة.",
   },
 };

@@ -11,7 +11,7 @@ export default function SchemaMarkup() {
       "addressLocality": "Amman",
       "addressCountry": "JO"
     },
-    "telephone": "+962 7 7060 9728",
+    "telephone": "+962 7 7151 5525",
     "email": "info@mafateehgroup.com",
     "url": "https://mafateeh-landing.manus.space",
     "priceRange": "$$",
