@@ -275,7 +275,7 @@ export default function Home() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/5 py-20 md:py-32">
+        <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/5 pt-8 pb-16 md:pt-10 md:pb-24">
           <div className="container relative">
             <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
               <div className="space-y-8">
